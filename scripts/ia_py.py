@@ -11,48 +11,57 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-
-
 def preprocessamento(texto):
-    return texto
+    # Add any additional preprocessing here
+    if isinstance(texto, str):
+        return texto.lower()
+    elif isinstance(texto, float):
+        return str(texto).lower()
+    else:
+        return str(texto)
 
 def carregar_dados_treinamento():
     try:
-        dados_treinamento = pd.read_pickle('dados_treinamento_processados.pkl')
+        dados_treinamento = pd.read_pickle('ia_reconhecimento_dados/cache/processed_data.pkl')
     except FileNotFoundError:
-        dados_treinamento = pd.read_csv('dados_para_treinamento.csv')
-        dados_treinamento.columns = dados_treinamento.columns.str.lower()
-        dados_treinamento['documento'] = dados_treinamento['documento'].apply(preprocessamento)
-        dados_treinamento.to_pickle('dados_treinamento_processados.pkl')
+        dados_treinamento = pd.read_csv('ia_reconhecimento_dados/data/training_data.csv')
+        # Apply preprocessing to each column name
+        dados_treinamento.columns = [preprocessamento(col) for col in dados_treinamento.columns]
+        dados_treinamento['document'] = dados_treinamento['document'].apply(preprocessamento)
+        dados_treinamento.to_pickle('ia_reconhecimento_dados/cache/processed_data.pkl')
 
     return dados_treinamento
 
 def treinar_ou_carregar_modelo():
     try:
-        modelo = joblib.load('modelo_treinado.pkl')
-        vetorizador = joblib.load('vetorizador.pkl')
+        modelo = joblib.load('ia_reconhecimento_dados/cache/modelo_treinado.pkl')
+        vetorizador = joblib.load('ia_reconhecimento_dados/cache/vetorizador.pkl')
+        
     except FileNotFoundError:
         dados_treinamento = carregar_dados_treinamento()
         vetorizador = TfidfVectorizer()
-        X = vetorizador.fit_transform(dados_treinamento['documento'])
-        y = dados_treinamento['tipo']
+        X = vetorizador.fit_transform(dados_treinamento['document'])
+        y = dados_treinamento['type']
         X_treino, X_teste, y_treino, y_teste = train_test_split(X, y, test_size=0.2, random_state=42)
         modelo = SVC(kernel='linear')
         modelo.fit(X_treino, y_treino)
-        joblib.dump(modelo, 'modelo_treinado.pkl')
-        joblib.dump(vetorizador, 'vetorizador.pkl')
+        joblib.dump(modelo, 'ia_reconhecimento_dados/cache/modelo_treinado.pkl')
+        joblib.dump(vetorizador, 'ia_reconhecimento_dados/cache/vetorizador.pkl')
         previsoes = modelo.predict(X_teste)
 
         precisao = accuracy_score(y_teste, previsoes)
-        print(f'Acurácia do modelo: {precisao}')
         matriz_confusao = confusion_matrix(y_teste, previsoes)
         sns.heatmap(matriz_confusao, annot=True, fmt='d', cmap='Blues', xticklabels=modelo.classes_, yticklabels=modelo.classes_)
         plt.xlabel('Previsto')
         plt.ylabel('Real')
         plt.show()
+    print(f'Acurácia do modelo: {precisao}')
     return modelo, vetorizador
 
 modelo, vetorizador = treinar_ou_carregar_modelo()
+
+
+
 
 def prever_tipo_documento(documento):
     documento = preprocessamento(documento)
@@ -63,7 +72,7 @@ def prever_tipo_documento(documento):
     
     return predicao
 
-exemplo = "Fernanda miguel"
+exemplo = "723.439.634-68"
 
 tipo_predito = prever_tipo_documento(exemplo)
 
