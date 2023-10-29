@@ -8,12 +8,8 @@ import joblib
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
-import seaborn as sns
-import matplotlib.pyplot as plt
-
 
 def preprocessamento(texto):
-    # Add any additional preprocessing here
     if isinstance(texto, str):
         return texto.lower()
     elif isinstance(texto, float):
@@ -60,20 +56,35 @@ def treinar_ou_carregar_modelo():
 
 modelo, vetorizador = treinar_ou_carregar_modelo()
 
-
-
-
 def prever_tipo_documento(documento):
     documento = preprocessamento(documento)
-
     documento_vetorizado = vetorizador.transform([documento])
-
     predicao = modelo.predict(documento_vetorizado)[0]
-    
     return predicao
 
-exemplo = "723.439.634-68"
+def avaliar_predicao(input_text,tipo_real, tipo_predito):
+    resposta = input(f"O tipo predito '{tipo_predito}' para o documento está correto? (s/n): ").lower()
+    if resposta == 's':
+        correto = True
+    elif resposta == 'n':
+        correto = False
+    else:
+        print("Resposta inválida. Por favor, responda 's' para correto ou 'n' para incorreto.")
+        correto = avaliar_predicao( input_text,tipo_real, tipo_predito)
+
+    with open('ia_reconhecimento_dados/data/feedback.csv', 'a') as file:
+        file.write(f"Text:{input_text}, Text_Real_Type:{tipo_real},\nPredicted_Type:{tipo_predito}, Predction_Status:{correto}\n")
+
+    return correto
+
+exemplo = "(81) 98434-9230"
+tipo_real = "PHONE"  
 
 tipo_predito = prever_tipo_documento(exemplo)
-
-print(f"Tipo de documento predito para o dado {exemplo}: {tipo_predito}")
+print("Exemplo inserido: " , exemplo)
+print("Tipo Real: ", tipo_real)
+correto = avaliar_predicao(exemplo ,tipo_real, tipo_predito)
+if correto:
+    print("A IA acertou!")
+else:
+    print("A IA errou. Vamos melhorar o treinamento.")

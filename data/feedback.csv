@@ -1,0 +1,8 @@
+Text:Ashley beat, Text_Real_Type:NAME_SURNAME,
+Predicted_Type:CNH, Predction_Status:False
+Text:Asher Martins, Text_Real_Type:NAME_SURNAME,
+Predicted_Type:NAME_SURNAME, Predction_Status:True
+Text:702.323.233-00, Text_Real_Type:CPF,
+Predicted_Type:CPF, Predction_Status:True
+Text:(81) 98434-9230, Text_Real_Type:PHONE,
+Predicted_Type:PHONE, Predction_Status:True
