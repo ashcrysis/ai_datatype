@@ -11,6 +11,7 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+
 def preprocessamento(texto):
     # Add any additional preprocessing here
     if isinstance(texto, str):
@@ -50,12 +51,12 @@ def treinar_ou_carregar_modelo():
         previsoes = modelo.predict(X_teste)
 
         precisao = accuracy_score(y_teste, previsoes)
+        print(f'Acurácia do modelo: {precisao}')
         matriz_confusao = confusion_matrix(y_teste, previsoes)
         sns.heatmap(matriz_confusao, annot=True, fmt='d', cmap='Blues', xticklabels=modelo.classes_, yticklabels=modelo.classes_)
         plt.xlabel('Previsto')
         plt.ylabel('Real')
         plt.show()
-    print(f'Acurácia do modelo: {precisao}')
     return modelo, vetorizador
 
 modelo, vetorizador = treinar_ou_carregar_modelo()
