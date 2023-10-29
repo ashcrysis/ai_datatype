@@ -37,7 +37,6 @@ def treinar_ou_carregar_modelo():
     try:
         modelo = joblib.load('ia_reconhecimento_dados/cache/modelo_treinado.pkl')
         vetorizador = joblib.load('ia_reconhecimento_dados/cache/vetorizador.pkl')
-        
     except FileNotFoundError:
         dados_treinamento = carregar_dados_treinamento()
         vetorizador = TfidfVectorizer()
