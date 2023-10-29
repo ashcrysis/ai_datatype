@@ -22,7 +22,6 @@ def carregar_dados_treinamento():
         dados_treinamento = pd.read_pickle('ia_reconhecimento_dados/cache/processed_data.pkl')
     except FileNotFoundError:
         dados_treinamento = pd.read_csv('ia_reconhecimento_dados/data/training_data.csv')
-        # Apply preprocessing to each column name
         dados_treinamento.columns = [preprocessamento(col) for col in dados_treinamento.columns]
         dados_treinamento['document'] = dados_treinamento['document'].apply(preprocessamento)
         dados_treinamento.to_pickle('ia_reconhecimento_dados/cache/processed_data.pkl')

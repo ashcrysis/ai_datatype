@@ -29,7 +29,6 @@ if os.path.exists(csv_file):
 else:
     df = pd.DataFrame(columns=['DOCUMENT', 'TYPE'])
 
-# Generate unique data for each row
 for _ in range(100):
     new_data = {
         'DOCUMENT': [generate_cpf(), generate_phone(), generate_address(), generate_name_surname(), generate_cnh()] ,
